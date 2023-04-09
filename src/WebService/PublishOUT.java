@@ -130,7 +130,7 @@ public class PublishOUT {
 
     public static void main(String[] args) throws SocketException, IOException {
 
-        Endpoint endpoint1 = Endpoint.publish("http://localhost:8082/movieOUT", new OUTImpl());
+        Endpoint endpoint1 = Endpoint.publish("http://192.168.56.1:8082/movieOUT", new OUTImpl());
         System.out.println("OUT service is published: " + endpoint1.isPublished());
 
         allmovieDetails.put("Avengers", moviedetailAvengers);

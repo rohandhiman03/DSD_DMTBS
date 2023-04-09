@@ -5,8 +5,13 @@
  */
 package WebService;
 
+import static WebService.RemoveMovie.data;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +32,7 @@ public class ListMovie extends javax.swing.JFrame {
      * Creates new form ListMovie
      */
     private String userID;
+
     public ListMovie(String userID) {
         initComponents();
         this.userID = userID;
@@ -158,55 +164,80 @@ public class ListMovie extends javax.swing.JFrame {
             System.out.println(e);
         }
     }
-    
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        try{
-        URL urlATW = new URL("http://localhost:8080/movieATW?wsdl");
-            QName qNameATW = new QName("http://WebService/", "ATWImplService");
-            Service serviceATW = Service.create(urlATW, qNameATW);
-            IATW atw = serviceATW.getPort(IATW.class);
-            
-            URL urlVER = new URL("http://localhost:8081/movieVER?wsdl");
-            QName qNameVER = new QName("http://WebService/", "VERImplService");
-            Service serviceVER = Service.create(urlVER, qNameVER);
-            IVER ver = serviceVER.getPort(IVER.class);
-            
-            URL urlOUT = new URL("http://localhost:8082/movieOUT?wsdl");
-            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
-            Service serviceOUT = Service.create(urlOUT, qNameOUT);
-            IOUT out = serviceOUT.getPort(IOUT.class);
-        String movieName = jComboBox1.getSelectedItem().toString();
-        
-        String showList = "";
+        try {
+//        URL urlATW = new URL("http://192.168.56.1:8080/movieATW?wsdl");
+//            QName qNameATW = new QName("http://WebService/", "ATWImplService");
+//            Service serviceATW = Service.create(urlATW, qNameATW);
+//            IATW atw = serviceATW.getPort(IATW.class);
+//            
+//            URL urlVER = new URL("http://192.168.56.1:8081/movieVER?wsdl");
+//            QName qNameVER = new QName("http://WebService/", "VERImplService");
+//            Service serviceVER = Service.create(urlVER, qNameVER);
+//            IVER ver = serviceVER.getPort(IVER.class);
+//            
+//            URL urlOUT = new URL("http://192.168.56.1:8082/movieOUT?wsdl");
+//            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
+//            Service serviceOUT = Service.create(urlOUT, qNameOUT);
+//            IOUT out = serviceOUT.getPort(IOUT.class);
 
-                        if (userID.substring(0, 3).equals("ATW")) {
-                            showList = atw.listMovieShowsAvailability(movieName);
-                        } else if (userID.substring(0, 3).equals("VER")) {
-                            showList = ver.listMovieShowsAvailability(movieName);
-                        } else if (userID.substring(0, 3).equals("OUT")) {
-                            showList = out.listMovieShowsAvailability(movieName);
-                        }
+            String movieName = jComboBox1.getSelectedItem().toString();
+            String reqForSequencer = "listMovie," + userID + "," + movieName;
 
-                        System.out.println("Shows For " + movieName);
-                        if (showList.replaceAll("[{}]", "").isEmpty()) {
-                            LogWritterGeneral(userID, "List Of Shows For " + movieName, "No shows available");
-                            JOptionPane.showMessageDialog(this, "No shows available");
-                        } else {
-                            jTextArea1.setText(showList);
-                            LogWritterGeneral(userID, "List Of Shows For " + movieName, showList.toString());
+//                        if (userID.substring(0, 3).equals("ATW")) {
+//                            showList = atw.listMovieShowsAvailability(movieName);
+//                        } else if (userID.substring(0, 3).equals("VER")) {
+//                            showList = ver.listMovieShowsAvailability(movieName);
+//                        } else if (userID.substring(0, 3).equals("OUT")) {
+//                            showList = out.listMovieShowsAvailability(movieName);
+//                        }
+            DatagramSocket ds = new DatagramSocket();
 
-                        }
-        }
-        catch(Exception e){
-            
+            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            byte buf[] = null;
+
+            buf = reqForSequencer.getBytes();
+
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, 5001);
+            ds.send(packet);
+            ds.close();
+
+            DatagramSocket dsReceive = new DatagramSocket(5002);
+            byte[] receive = new byte[65535];
+            DatagramPacket DpReceive = null;
+
+            DpReceive = new DatagramPacket(receive, receive.length);
+            dsReceive.setSoTimeout(5000);
+
+            try {
+                dsReceive.receive(DpReceive);
+                dsReceive.close();
+            } catch (SocketTimeoutException e) {
+                dsReceive.close();
+                JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
+            }
+
+            String showList = data(receive).toString();
+
+            System.out.println("Shows For " + movieName);
+            if (showList.replaceAll("[{}]", "").isEmpty()) {
+                LogWritterGeneral(userID, "List Of Shows For " + movieName, "No shows available");
+                JOptionPane.showMessageDialog(this, "No shows available");
+            } else {
+                jTextArea1.setText(showList);
+                LogWritterGeneral(userID, "List Of Shows For " + movieName, showList.toString());
+
+            }
+        } catch (Exception e) {
+
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
      */
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

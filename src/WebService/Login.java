@@ -157,20 +157,20 @@ public class Login extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
       try{
-        URL urlATW = new URL("http://localhost:8080/movieATW?wsdl");
+        URL urlATW = new URL("http://192.168.56.1:8080/movieATW?wsdl");
         QName qNameATW = new QName("http://WebService/", "ATWImplService");
         Service serviceATW = Service.create(urlATW, qNameATW);
         IATW atw = serviceATW.getPort(IATW.class);
 
-//        URL urlVER = new URL("http://localhost:8081/movieVER?wsdl");
-//        QName qNameVER = new QName("http://WebService/", "VERImplService");
-//        Service serviceVER = Service.create(urlVER, qNameVER);
-//        IVER ver = serviceVER.getPort(IVER.class);
-//
-//        URL urlOUT = new URL("http://localhost:8082/movieOUT?wsdl");
-//        QName qNameOUT = new QName("http://WebService/", "OUTImplService");
-//        Service serviceOUT = Service.create(urlOUT, qNameOUT);
-//        IOUT out = serviceOUT.getPort(IOUT.class);
+        URL urlVER = new URL("http://192.168.56.1:8081/movieVER?wsdl");
+        QName qNameVER = new QName("http://WebService/", "VERImplService");
+        Service serviceVER = Service.create(urlVER, qNameVER);
+        IVER ver = serviceVER.getPort(IVER.class);
+
+        URL urlOUT = new URL("http://192.168.56.1:8082/movieOUT?wsdl");
+        QName qNameOUT = new QName("http://WebService/", "OUTImplService");
+        Service serviceOUT = Service.create(urlOUT, qNameOUT);
+        IOUT out = serviceOUT.getPort(IOUT.class);
         
         String userID = jTextField1.getText();
         String typeofcust = checkLoginID(userID);
@@ -178,9 +178,9 @@ public class Login extends javax.swing.JFrame {
         if (userID.substring(0, 3).equals("ATW")) {
             userCheckServer = atw.checkUserExists(userID);
         } else if (userID.substring(0, 3).equals("VER")) {
-//            userCheckServer = ver.checkUserExists(userID);
+            userCheckServer = ver.checkUserExists(userID);
         } else if (userID.substring(0, 3).equals("OUT")) {
-//            userCheckServer = out.checkUserExists(userID);
+            userCheckServer = out.checkUserExists(userID);
         }
         if (!userCheckServer.equals("y")) {
             JOptionPane.showMessageDialog(this, "User ID does not exist!!");
@@ -191,8 +191,7 @@ public class Login extends javax.swing.JFrame {
                     LogWritterGeneral(userID, "Login", "Admin");
                     try {
                         LogWritterGeneral(userID, "Admin " + userID, "LoggedIn");
-//                        System.out.println("Admin Logged In");
-//                        AdminOptions(userID, args);
+
                         Admin adminFrame = new Admin(userID);
                         adminFrame.setVisible(true);
                         this.dispose();
@@ -210,9 +209,10 @@ public class Login extends javax.swing.JFrame {
                     LogWritterGeneral(userID, "Login", "Client");
                     try {
                         LogWritterGeneral(userID, "Customer " + userID, "LoggedIn");
-//                        System.out.println("Customer Logged In");
                         JOptionPane.showMessageDialog(this, "Customer Logged In");
-//                        CustomerOptions(userID, args);
+                        Customer custFrame = new Customer(userID);
+                        custFrame.setVisible(true);
+                        this.dispose();
                     } catch (Exception e) {
                         LogWritterGeneral(userID, "Exception Occured", e.toString());
 
@@ -222,7 +222,6 @@ public class Login extends javax.swing.JFrame {
                     break;
                 default:
                     LogWritterGeneral(userID, "Login", "Invalid User ID");
-//                    System.out.println("Invalid Customer ID. Please Try Again");
                     JOptionPane.showMessageDialog(this, "Invalid Customer ID. Please Try Again");
                     break;
             }

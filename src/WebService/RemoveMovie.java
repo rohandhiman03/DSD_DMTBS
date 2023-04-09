@@ -5,8 +5,13 @@
  */
 package WebService;
 
+import static WebService.AddMovie.data;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -214,20 +219,7 @@ public class RemoveMovie extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         try {
-            URL urlATW = new URL("http://localhost:8080/movieATW?wsdl");
-            QName qNameATW = new QName("http://WebService/", "ATWImplService");
-            Service serviceATW = Service.create(urlATW, qNameATW);
-            IATW atw = serviceATW.getPort(IATW.class);
-
-            URL urlVER = new URL("http://localhost:8081/movieVER?wsdl");
-            QName qNameVER = new QName("http://WebService/", "VERImplService");
-            Service serviceVER = Service.create(urlVER, qNameVER);
-            IVER ver = serviceVER.getPort(IVER.class);
-
-            URL urlOUT = new URL("http://localhost:8082/movieOUT?wsdl");
-            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
-            Service serviceOUT = Service.create(urlOUT, qNameOUT);
-            IOUT out = serviceOUT.getPort(IOUT.class);
+//            
 
             String mid_server = userID.substring(0, 3);
             String movieName = "";
@@ -241,32 +233,95 @@ public class RemoveMovie extends javax.swing.JFrame {
 
             movieID = mid_server + movieSlot + dateinp.substring(0, 4) + dateinp.substring(6, 8);
 
-            String removeSuccess = "";
+            String reqForSequencer = "removeMovie," + userID + "," + movieID + "," + movieName;
 
-            if (userID.substring(0, 3).equals("ATW")) {
-                removeSuccess = atw.removeMovieSlots(movieID, movieName);
-            } else if (userID.substring(0, 3).equals("VER")) {
-                removeSuccess = ver.removeMovieSlots(movieID, movieName);
-            } else if (userID.substring(0, 3).equals("OUT")) {
-                removeSuccess = out.removeMovieSlots(movieID, movieName);
+            DatagramSocket ds = new DatagramSocket();
+
+            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            byte buf[] = null;
+
+            buf = reqForSequencer.getBytes();
+
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, 5001);
+            ds.send(packet);
+            ds.close();
+
+            DatagramSocket dsReceive = new DatagramSocket(5002);
+            byte[] receive = new byte[65535];
+            DatagramPacket DpReceive = null;
+
+            DpReceive = new DatagramPacket(receive, receive.length);
+            dsReceive.setSoTimeout(5000);
+
+            try {
+                dsReceive.receive(DpReceive);
+                dsReceive.close();
+            } catch (SocketTimeoutException e) {
+                dsReceive.close();
+                JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
             }
 
-            if (removeSuccess.equals("y")) {
-                JOptionPane.showMessageDialog(this, "Movie Slot Removed");
-                LogWritterGeneral(userID, "Movie Slot Removed", movieID);
-            } else if (removeSuccess.equals("olddate")) {
-                JOptionPane.showMessageDialog(this, "Movie Slot Of Passed Date Cannot Be Deleted");
-                LogWritterGeneral(userID, "Movie Slot Of Passed Date Cannot Be Deleted", movieID);
-            } else {
-                JOptionPane.showMessageDialog(this, "Movie Slot Doesnt Exist");
-                LogWritterGeneral(userID, "Movie Slot Doesnt Exist", movieID);
-            }
+            String combinedremoveSuccess = data(receive).toString();
+            String[] removeSuccess = combinedremoveSuccess.split(",");
 
+//            if (userID.substring(0, 3).equals("ATW")) {
+//                removeSuccess = atw.removeMovieSlots(movieID, movieName);
+//            } else if (userID.substring(0, 3).equals("VER")) {
+//                removeSuccess = ver.removeMovieSlots(movieID, movieName);
+//            } else if (userID.substring(0, 3).equals("OUT")) {
+//                removeSuccess = out.removeMovieSlots(movieID, movieName);
+//            }
+            if (removeSuccess[0].equals(removeSuccess[1])) {
+                if (removeSuccess[0].equals("y")) {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Removed");
+                    LogWritterGeneral(userID, "Movie Slot Removed", movieID);
+                } else if (removeSuccess[0].equals("olddate")) {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Of Passed Date Cannot Be Deleted");
+                    LogWritterGeneral(userID, "Movie Slot Of Passed Date Cannot Be Deleted", movieID);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Doesnt Exist");
+                    LogWritterGeneral(userID, "Movie Slot Doesnt Exist", movieID);
+                }
+            } else if (removeSuccess[1].equals(removeSuccess[2])) {
+                if (removeSuccess[1].equals("y")) {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Removed");
+                    LogWritterGeneral(userID, "Movie Slot Removed", movieID);
+                } else if (removeSuccess[1].equals("olddate")) {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Of Passed Date Cannot Be Deleted");
+                    LogWritterGeneral(userID, "Movie Slot Of Passed Date Cannot Be Deleted", movieID);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Doesnt Exist");
+                    LogWritterGeneral(userID, "Movie Slot Doesnt Exist", movieID);
+                }
+            } else if (removeSuccess[0].equals(removeSuccess[2])) {
+                if (removeSuccess[2].equals("y")) {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Removed");
+                    LogWritterGeneral(userID, "Movie Slot Removed", movieID);
+                } else if (removeSuccess[2].equals("olddate")) {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Of Passed Date Cannot Be Deleted");
+                    LogWritterGeneral(userID, "Movie Slot Of Passed Date Cannot Be Deleted", movieID);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Movie Slot Doesnt Exist");
+                    LogWritterGeneral(userID, "Movie Slot Doesnt Exist", movieID);
+                }
+            }
         } catch (Exception e) {
 
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    public static StringBuilder data(byte[] a) {
+        if (a == null) {
+            return null;
+        }
+        StringBuilder ret = new StringBuilder();
+        int i = 0;
+        while (a[i] != 0) {
+            ret.append((char) a[i]);
+            i++;
+        }
+        return ret;
+    }
     /**
      * @param args the command line arguments
      */

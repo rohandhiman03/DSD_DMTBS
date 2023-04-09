@@ -7,6 +7,10 @@ package WebService;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -170,20 +174,20 @@ public class AddMovie extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         try {
-            URL urlATW = new URL("http://localhost:8080/movieATW?wsdl");
-            QName qNameATW = new QName("http://WebService/", "ATWImplService");
-            Service serviceATW = Service.create(urlATW, qNameATW);
-            IATW atw = serviceATW.getPort(IATW.class);
-
-            URL urlVER = new URL("http://localhost:8081/movieVER?wsdl");
-            QName qNameVER = new QName("http://WebService/", "VERImplService");
-            Service serviceVER = Service.create(urlVER, qNameVER);
-            IVER ver = serviceVER.getPort(IVER.class);
-
-            URL urlOUT = new URL("http://localhost:8082/movieOUT?wsdl");
-            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
-            Service serviceOUT = Service.create(urlOUT, qNameOUT);
-            IOUT out = serviceOUT.getPort(IOUT.class);
+//            URL urlATW = new URL("http://192.168.56.1:8080/movieATW?wsdl");
+//            QName qNameATW = new QName("http://WebService/", "ATWImplService");
+//            Service serviceATW = Service.create(urlATW, qNameATW);
+//            IATW atw = serviceATW.getPort(IATW.class);
+//
+//            URL urlVER = new URL("http://192.168.56.1:8081/movieVER?wsdl");
+//            QName qNameVER = new QName("http://WebService/", "VERImplService");
+//            Service serviceVER = Service.create(urlVER, qNameVER);
+//            IVER ver = serviceVER.getPort(IVER.class);
+//
+//            URL urlOUT = new URL("http://192.168.56.1:8082/movieOUT?wsdl");
+//            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
+//            Service serviceOUT = Service.create(urlOUT, qNameOUT);
+//            IOUT out = serviceOUT.getPort(IOUT.class);
 
             String mid_server = userID.substring(0, 3);
             String movieName = "";
@@ -212,30 +216,100 @@ public class AddMovie extends javax.swing.JFrame {
                 LogWritterGeneral(userID, "Slot addition for passed date not allowed.", "Date entered : " + dateinp);
                 System.exit(0);
             }
-            
+
             movieID = mid_server + movieSlot + dateinp.substring(0, 4) + dateinp.substring(6, 8);
-            
-            String bookingSuccess = "";
-                        if (userID.substring(0, 3).equals("ATW")) {
-                            bookingSuccess = atw.addMovieSlots(movieID, movieName, BookingCapacity);
-                        } else if (userID.substring(0, 3).equals("VER")) {
-                            bookingSuccess = ver.addMovieSlots(movieID, movieName, BookingCapacity);
-                        } else if (userID.substring(0, 3).equals("OUT")) {
-                            bookingSuccess = out.addMovieSlots(movieID, movieName, BookingCapacity);
-                        }
 
-                        if (bookingSuccess.equals("y")) {
-                            JOptionPane.showMessageDialog(this, "Slot added successfully.");
-                            LogWritterGeneral(userID, "Slot added", "Success");
-                        } else if (bookingSuccess.equals("exists")) {
-                            JOptionPane.showMessageDialog(this, "Movie " + movieName + " with ID " + movieID + " already exists. Show capacity updated.");
-                            LogWritterGeneral(userID, "Slot Already Exists", "Capacity Updated");
-                        }
+            String reqForSequencer = "addMovie," + userID + "," + movieID + "," + movieName + "," + BookingCapacity;
 
+            DatagramSocket ds = new DatagramSocket();
+
+            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            byte buf[] = null;
+
+            buf = reqForSequencer.getBytes();
+
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, 5001);
+            ds.send(packet);
+            ds.close();
+
+            DatagramSocket dsReceive = new DatagramSocket(5002);
+            byte[] receive = new byte[65535];
+            DatagramPacket DpReceive = null;
+
+            DpReceive = new DatagramPacket(receive, receive.length);
+            dsReceive.setSoTimeout(5000);
+
+            try {
+                dsReceive.receive(DpReceive);
+                dsReceive.close();
+            } catch (SocketTimeoutException e) {
+                dsReceive.close();
+                JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
+            }
+
+            String combinedbookingSuccess = data(receive).toString();
+            System.out.println(combinedbookingSuccess);
+
+            String[] bookingSuccess = combinedbookingSuccess.split(",");
+
+//            if (userID.substring(0, 3).equals("ATW")) {
+//                bookingSuccess = atw.addMovieSlots(movieID, movieName, BookingCapacity);
+//            } else if (userID.substring(0, 3).equals("VER")) {
+//                bookingSuccess = ver.addMovieSlots(movieID, movieName, BookingCapacity);
+//            } else if (userID.substring(0, 3).equals("OUT")) {
+//                bookingSuccess = out.addMovieSlots(movieID, movieName, BookingCapacity);
+//            }
+            if (bookingSuccess[0].equals(bookingSuccess[1])) {
+                if (bookingSuccess[0].equals("y")) {
+                    JOptionPane.showMessageDialog(this, "Slot added successfully.");
+                    LogWritterGeneral(userID, "Slot added", "Success");
+                } else if (bookingSuccess[0].equals("exists")) {
+                    JOptionPane.showMessageDialog(this, "Movie " + movieName + " with ID " + movieID + " already exists. Show capacity updated.");
+                    LogWritterGeneral(userID, "Slot Already Exists", "Capacity Updated");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error Occured!!");
+                }
+            } else if (bookingSuccess[1].equals(bookingSuccess[2])) {
+                if (bookingSuccess[1].equals("y")) {
+                    JOptionPane.showMessageDialog(this, "Slot added successfully.");
+                    LogWritterGeneral(userID, "Slot added", "Success");
+                } else if (bookingSuccess[1].equals("exists")) {
+                    JOptionPane.showMessageDialog(this, "Movie " + movieName + " with ID " + movieID + " already exists. Show capacity updated.");
+                    LogWritterGeneral(userID, "Slot Already Exists", "Capacity Updated");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error Occured!!");
+                }
+            } else if (bookingSuccess[0].equals(bookingSuccess[2])) {
+                if (bookingSuccess[2].equals("y")) {
+                    JOptionPane.showMessageDialog(this, "Slot added successfully.");
+                    LogWritterGeneral(userID, "Slot added", "Success");
+                } else if (bookingSuccess[2].equals("exists")) {
+                    JOptionPane.showMessageDialog(this, "Movie " + movieName + " with ID " + movieID + " already exists. Show capacity updated.");
+                    LogWritterGeneral(userID, "Slot Already Exists", "Capacity Updated");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error Occured!!");
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Error Occured RM informed");
+            }
         } catch (Exception e) {
 
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    public static StringBuilder data(byte[] a) {
+        if (a == null) {
+            return null;
+        }
+        StringBuilder ret = new StringBuilder();
+        int i = 0;
+        while (a[i] != 0) {
+            ret.append((char) a[i]);
+            i++;
+        }
+        return ret;
+    }
 
     private void LogWritterGeneral(String userID, String id, String value) {
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
