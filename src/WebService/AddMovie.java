@@ -31,14 +31,15 @@ public class AddMovie extends javax.swing.JFrame {
 
     private String userID;
     public static int time_out;
-
+    public static String ssf;
     /**
      * Creates new form AddMovie
      */
-    public AddMovie(String userID,int time_out) {
+    public AddMovie(String userID,int time_out,String ssf) {
         initComponents();
         this.userID = userID;
         this.time_out = time_out;
+        this.ssf = ssf;
         jLabel2.setText(userID);
     }
 
@@ -176,20 +177,7 @@ public class AddMovie extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         try {
-//            URL urlATW = new URL("http://10.0.0.34:8080/movieATW?wsdl");
-//            QName qNameATW = new QName("http://WebService/", "ATWImplService");
-//            Service serviceATW = Service.create(urlATW, qNameATW);
-//            IATW atw = serviceATW.getPort(IATW.class);
-//
-//            URL urlVER = new URL("http://10.0.0.34:8081/movieVER?wsdl");
-//            QName qNameVER = new QName("http://WebService/", "VERImplService");
-//            Service serviceVER = Service.create(urlVER, qNameVER);
-//            IVER ver = serviceVER.getPort(IVER.class);
-//
-//            URL urlOUT = new URL("http://10.0.0.34:8082/movieOUT?wsdl");
-//            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
-//            Service serviceOUT = Service.create(urlOUT, qNameOUT);
-//            IOUT out = serviceOUT.getPort(IOUT.class);
+
             String mid_server = userID.substring(0, 3);
             String movieName = "";
             String movieSlot = "";
@@ -220,7 +208,7 @@ public class AddMovie extends javax.swing.JFrame {
 
             movieID = mid_server + movieSlot + dateinp.substring(0, 4) + dateinp.substring(6, 8);
 
-            String reqForSequencer = "addMovie," + userID + "," + movieID + "," + movieName + "," + BookingCapacity+","+time_out;
+            String reqForSequencer = "addMovie," + userID + "," + movieID + "," + movieName + "," + BookingCapacity+","+time_out+","+ssf;
 
             DatagramSocket ds = new DatagramSocket();
 
@@ -229,7 +217,7 @@ public class AddMovie extends javax.swing.JFrame {
 
             buf = reqForSequencer.getBytes();
 
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, 5001);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, 5005);
             ds.send(packet);
             ds.close();
 

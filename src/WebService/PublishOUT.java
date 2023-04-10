@@ -34,6 +34,7 @@ public class PublishOUT {
     static HashMap<String, Double> movieDetailsToDisplay = new HashMap<String, Double>();
     static HashMap<String, Double> customerDetailsToDisplay = new HashMap<String, Double>();
     static HashMap<String, Double> customerOtherBkgCount = new HashMap<String, Double>();
+    static Endpoint endpoint1;
 
     public static StringBuilder data(byte[] a) {
         if (a == null) {
@@ -127,11 +128,22 @@ public class PublishOUT {
         }
 
     }
+    
+    public static void StartService(){
+        endpoint1 = Endpoint.publish("http://10.0.0.34:8082/movieOUT", new OUTImpl());
+        System.out.println("OUT service is published: " + endpoint1.isPublished());
+    }
+    
+    public static void RestartService(){
+        endpoint1.stop();
+        endpoint1 = Endpoint.publish("http://10.0.0.34:8082/movieOUT", new OUTImpl());
+        System.out.println("OUT service is Restarted: " + endpoint1.isPublished());
+    }
+
 
     public static void main(String[] args) throws SocketException, IOException {
-
-        Endpoint endpoint1 = Endpoint.publish("http://10.0.0.34:8082/movieOUT", new OUTImpl());
-        System.out.println("OUT service is published: " + endpoint1.isPublished());
+        
+        StartService();
 
         allmovieDetails.put("Avengers", moviedetailAvengers);
         allmovieDetails.put("Avatar", moviedetailAvatar);
@@ -185,6 +197,9 @@ public class PublishOUT {
                 double count = Double.parseDouble(rec.substring(10, 11));
                 customerOtherBkgCount.put(custId, count);
             }
+            else if(rec.equals("restart")){
+                RestartService();
+                }
 
             receive = new byte[65535];
         }

@@ -206,7 +206,7 @@ public class BookMovie extends javax.swing.JFrame {
 
             buf = reqForSequencer.getBytes();
 
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, 5001);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, 5005);
             ds.send(packet);
             ds.close();
 

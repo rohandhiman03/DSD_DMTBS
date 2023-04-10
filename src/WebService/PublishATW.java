@@ -35,6 +35,7 @@ public class PublishATW {
     static HashMap<String, Double> movieDetailsToDisplay = new HashMap<String, Double>();
     static HashMap<String, Double> customerDetailsToDisplay = new HashMap<String, Double>();
     static HashMap<String, Double> customerOtherBkgCount = new HashMap<String, Double>();
+    static Endpoint endpoint1;
 
     public static void listMovieShowsForOtherServer(String movieName, String port) throws IOException {
         HashMap<String, Double> movieList = allmovieDetails.get(movieName);
@@ -128,11 +129,21 @@ public class PublishATW {
         }
         return ret;
     }
+    
+    public static void StartService(){
+        endpoint1 = Endpoint.publish("http://10.0.0.34:8080/movieATW", new ATWImpl());
+        System.out.println("ATW service is published: " + endpoint1.isPublished());
+    }
+    
+    public static void RestartService(){
+        endpoint1.stop();
+        endpoint1 = Endpoint.publish("http://10.0.0.34:8080/movieATW", new ATWImpl());
+        System.out.println("ATW service Restarted: " + endpoint1.isPublished());
+    }
 
     public static void main(String[] args) throws SocketException, IOException {
 
-        Endpoint endpoint1 = Endpoint.publish("http://10.0.0.34:8080/movieATW", new ATWImpl());
-        System.out.println("ATW service is published: " + endpoint1.isPublished());
+        StartService();
         
         allmovieDetails.put("Avengers", moviedetailAvengers);
         allmovieDetails.put("Avatar", moviedetailAvatar);
@@ -188,6 +199,10 @@ public class PublishATW {
                     String custId = rec.substring(2,10);
                     double count = Double.parseDouble(rec.substring(10, 11));
                     customerOtherBkgCount.put(custId, count);
+                }
+                
+                else if(rec.equals("restart")){
+                RestartService();
                 }
 
                 receive = new byte[65535];

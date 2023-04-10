@@ -107,16 +107,18 @@ public class Login extends javax.swing.JFrame {
                         .addComponent(jLabel2)
                         .addGap(37, 37, 37)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(46, 46, 46)
                         .addComponent(jLabel3)
                         .addGap(26, 26, 26)
-                        .addComponent(jRadioButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jRadioButton2)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jRadioButton1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jRadioButton2)))))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -133,9 +135,9 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(jRadioButton1)
                     .addComponent(jRadioButton2)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                .addGap(50, 50, 50)
                 .addComponent(jButton1)
-                .addGap(19, 19, 19))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
@@ -200,9 +202,10 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             int time_out = 0;
+            String ssf = "n";
             String typeOfFailure = buttonGroup1.getSelection().getActionCommand();
             if (typeOfFailure.equals("Single Software Failure")) {                
-                
+                ssf = "y";
             } else if (typeOfFailure.equals("Highly Available")) {
                 time_out = 6000; 
             }
@@ -242,7 +245,7 @@ public class Login extends javax.swing.JFrame {
                         try {
                             LogWritterGeneral(userID, "Admin " + userID, "LoggedIn");
 
-                            Admin adminFrame = new Admin(userID,time_out);
+                            Admin adminFrame = new Admin(userID,time_out,ssf);
                             adminFrame.setVisible(true);
                             this.dispose();
 
