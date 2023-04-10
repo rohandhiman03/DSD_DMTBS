@@ -30,13 +30,15 @@ import javax.xml.ws.Service;
 public class AddMovie extends javax.swing.JFrame {
 
     private String userID;
+    public static int time_out;
 
     /**
      * Creates new form AddMovie
      */
-    public AddMovie(String userID) {
+    public AddMovie(String userID,int time_out) {
         initComponents();
         this.userID = userID;
+        this.time_out = time_out;
         jLabel2.setText(userID);
     }
 
@@ -174,28 +176,27 @@ public class AddMovie extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         try {
-//            URL urlATW = new URL("http://192.168.56.1:8080/movieATW?wsdl");
+//            URL urlATW = new URL("http://10.0.0.34:8080/movieATW?wsdl");
 //            QName qNameATW = new QName("http://WebService/", "ATWImplService");
 //            Service serviceATW = Service.create(urlATW, qNameATW);
 //            IATW atw = serviceATW.getPort(IATW.class);
 //
-//            URL urlVER = new URL("http://192.168.56.1:8081/movieVER?wsdl");
+//            URL urlVER = new URL("http://10.0.0.34:8081/movieVER?wsdl");
 //            QName qNameVER = new QName("http://WebService/", "VERImplService");
 //            Service serviceVER = Service.create(urlVER, qNameVER);
 //            IVER ver = serviceVER.getPort(IVER.class);
 //
-//            URL urlOUT = new URL("http://192.168.56.1:8082/movieOUT?wsdl");
+//            URL urlOUT = new URL("http://10.0.0.34:8082/movieOUT?wsdl");
 //            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
 //            Service serviceOUT = Service.create(urlOUT, qNameOUT);
 //            IOUT out = serviceOUT.getPort(IOUT.class);
-
             String mid_server = userID.substring(0, 3);
             String movieName = "";
             String movieSlot = "";
             int BookingCapacity = 0;
             String movieID = "";
             String date = new SimpleDateFormat("ddMMyy").format(new Date());
-
+            ReplicaManager rm = new ReplicaManager();
             movieName = jComboBox1.getSelectedItem().toString();
             movieSlot = jComboBox2.getSelectedItem().toString();
             BookingCapacity = Integer.parseInt(jTextField2.getText());
@@ -219,11 +220,11 @@ public class AddMovie extends javax.swing.JFrame {
 
             movieID = mid_server + movieSlot + dateinp.substring(0, 4) + dateinp.substring(6, 8);
 
-            String reqForSequencer = "addMovie," + userID + "," + movieID + "," + movieName + "," + BookingCapacity;
+            String reqForSequencer = "addMovie," + userID + "," + movieID + "," + movieName + "," + BookingCapacity+","+time_out;
 
             DatagramSocket ds = new DatagramSocket();
 
-            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            InetAddress ip = InetAddress.getByName("10.0.0.34");
             byte buf[] = null;
 
             buf = reqForSequencer.getBytes();
@@ -243,23 +244,30 @@ public class AddMovie extends javax.swing.JFrame {
                 dsReceive.receive(DpReceive);
                 dsReceive.close();
             } catch (SocketTimeoutException e) {
-                dsReceive.close();
+                rm.restartServices0();
                 JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
             }
-
+            
+            Thread.sleep(2000);
+            dsReceive.close();
+            
             String combinedbookingSuccess = data(receive).toString();
             System.out.println(combinedbookingSuccess);
 
             String[] bookingSuccess = combinedbookingSuccess.split(",");
 
-//            if (userID.substring(0, 3).equals("ATW")) {
-//                bookingSuccess = atw.addMovieSlots(movieID, movieName, BookingCapacity);
-//            } else if (userID.substring(0, 3).equals("VER")) {
-//                bookingSuccess = ver.addMovieSlots(movieID, movieName, BookingCapacity);
-//            } else if (userID.substring(0, 3).equals("OUT")) {
-//                bookingSuccess = out.addMovieSlots(movieID, movieName, BookingCapacity);
-//            }
-            if (bookingSuccess[0].equals(bookingSuccess[1])) {
+            if (bookingSuccess[0].equals(bookingSuccess[1]) && bookingSuccess[1].equals(bookingSuccess[2]) && bookingSuccess[0].equals(bookingSuccess[2])) {
+                if (bookingSuccess[0].equals("y")) {
+                    JOptionPane.showMessageDialog(this, "Slot added successfully.");
+                    LogWritterGeneral(userID, "Slot added", "Success");
+                } else if (bookingSuccess[0].equals("exists")) {
+                    JOptionPane.showMessageDialog(this, "Movie " + movieName + " with ID " + movieID + " already exists. Show capacity updated.");
+                    LogWritterGeneral(userID, "Slot Already Exists", "Capacity Updated");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error Occured!!");
+                }
+            } else if (bookingSuccess[0].equals(bookingSuccess[1])) {
+                rm.restartServices2();
                 if (bookingSuccess[0].equals("y")) {
                     JOptionPane.showMessageDialog(this, "Slot added successfully.");
                     LogWritterGeneral(userID, "Slot added", "Success");
@@ -270,6 +278,7 @@ public class AddMovie extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Error Occured!!");
                 }
             } else if (bookingSuccess[1].equals(bookingSuccess[2])) {
+                rm.restartServices0();
                 if (bookingSuccess[1].equals("y")) {
                     JOptionPane.showMessageDialog(this, "Slot added successfully.");
                     LogWritterGeneral(userID, "Slot added", "Success");
@@ -281,6 +290,7 @@ public class AddMovie extends javax.swing.JFrame {
                 }
             } else if (bookingSuccess[0].equals(bookingSuccess[2])) {
                 if (bookingSuccess[2].equals("y")) {
+                    rm.restartServices1();
                     JOptionPane.showMessageDialog(this, "Slot added successfully.");
                     LogWritterGeneral(userID, "Slot added", "Success");
                 } else if (bookingSuccess[2].equals("exists")) {
@@ -289,8 +299,10 @@ public class AddMovie extends javax.swing.JFrame {
                 } else {
                     JOptionPane.showMessageDialog(this, "Error Occured!!");
                 }
-            }
-            else{
+            } else {
+                rm.restartServices1();
+                rm.restartServices0();
+                rm.restartServices2();
                 JOptionPane.showMessageDialog(this, "Error Occured RM informed");
             }
         } catch (Exception e) {

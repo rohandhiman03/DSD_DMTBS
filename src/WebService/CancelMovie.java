@@ -153,19 +153,16 @@ public class CancelMovie extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        try{
-        String movieName = jComboBox1.getSelectedItem().toString();
-        String movieID = jTextField1.getText();
-        String nooftktstocancel = jTextField2.getText();
-        
-        String reqForSequencer = "cancelMovie," + userID + "," + movieID + "," + movieName+","+nooftktstocancel;
+        try {
+            String movieName = jComboBox1.getSelectedItem().toString();
+            String movieID = jTextField1.getText();
+            String nooftktstocancel = jTextField2.getText();
 
-        
-        
-        
-        DatagramSocket ds = new DatagramSocket();
+            String reqForSequencer = "cancelMovie," + userID + "," + movieID + "," + movieName + "," + nooftktstocancel;
 
-            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            DatagramSocket ds = new DatagramSocket();
+
+            InetAddress ip = InetAddress.getByName("10.0.0.34");
             byte buf[] = null;
 
             buf = reqForSequencer.getBytes();
@@ -182,34 +179,70 @@ public class CancelMovie extends javax.swing.JFrame {
             dsReceive.setSoTimeout(5000);
 
             try {
-                dsReceive.receive(DpReceive);  
+                dsReceive.receive(DpReceive);
                 dsReceive.close();
             } catch (SocketTimeoutException e) {
                 dsReceive.close();
                 JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
             }
-            
-            String cancelConfirmation = data(receive).toString();
 
-        LogWritterGeneral(userID, "Cancellation Confirmation", cancelConfirmation);
+            String combinedcancelConfirmation = data(receive).toString();
+            String[] cancelConfirmation = combinedcancelConfirmation.split(",");
 
-        if (cancelConfirmation.equals("cancelled")) {
-            JOptionPane.showMessageDialog(this, nooftktstocancel + " tickets for the movie id " + movieID + " cancelled");
-            LogWritterGeneral(userID, "Cancellation Confirmation", "Partially Cancelled");
-        } else if (cancelConfirmation.equals("allcancelled")) {
-            JOptionPane.showMessageDialog(this, "All tickets for the movie id " + movieID + " cancelled");
-            LogWritterGeneral(userID, "Cancellation Confirmation", "All Tickets Cancelled");
-        } else if (cancelConfirmation.equals("cncltktexceed")) {
-            LogWritterGeneral(userID, "Cancellation Confirmation", "No of tickets requested exceeded the number of tickets booked");
-            JOptionPane.showMessageDialog(this, "Number of tickets requested to cancel were more than the number of booked tickets");
-        } else if (cancelConfirmation.equals("nobooking")) {
-            LogWritterGeneral(userID, "Cancellation Confirmation", "No booking found");
-            JOptionPane.showMessageDialog(this, "No bookings for the entered movie id for Customer ID " + userID);
+            LogWritterGeneral(userID, "Cancellation Confirmation", combinedcancelConfirmation);
+            if (cancelConfirmation[0].equals(cancelConfirmation[1])) {
+                if (cancelConfirmation[0].equals("cancelled")) {
+                    JOptionPane.showMessageDialog(this, nooftktstocancel + " tickets for the movie id " + movieID + " cancelled");
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "Partially Cancelled");
+                } else if (cancelConfirmation[0].equals("allcancelled")) {
+                    JOptionPane.showMessageDialog(this, "All tickets for the movie id " + movieID + " cancelled");
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "All Tickets Cancelled");
+                } else if (cancelConfirmation[0].equals("cncltktexceed")) {
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "No of tickets requested exceeded the number of tickets booked");
+                    JOptionPane.showMessageDialog(this, "Number of tickets requested to cancel were more than the number of booked tickets");
+                } else if (cancelConfirmation[0].equals("nobooking")) {
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "No booking found");
+                    JOptionPane.showMessageDialog(this, "No bookings for the entered movie id for Customer ID " + userID);
+                }
+
+            }
+            else if (cancelConfirmation[2].equals(cancelConfirmation[1])) {
+                if (cancelConfirmation[1].equals("cancelled")) {
+                    JOptionPane.showMessageDialog(this, nooftktstocancel + " tickets for the movie id " + movieID + " cancelled");
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "Partially Cancelled");
+                } else if (cancelConfirmation[1].equals("allcancelled")) {
+                    JOptionPane.showMessageDialog(this, "All tickets for the movie id " + movieID + " cancelled");
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "All Tickets Cancelled");
+                } else if (cancelConfirmation[1].equals("cncltktexceed")) {
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "No of tickets requested exceeded the number of tickets booked");
+                    JOptionPane.showMessageDialog(this, "Number of tickets requested to cancel were more than the number of booked tickets");
+                } else if (cancelConfirmation[1].equals("nobooking")) {
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "No booking found");
+                    JOptionPane.showMessageDialog(this, "No bookings for the entered movie id for Customer ID " + userID);
+                }
+
+            }
+            else if (cancelConfirmation[0].equals(cancelConfirmation[2])) {
+                if (cancelConfirmation[0].equals("cancelled")) {
+                    JOptionPane.showMessageDialog(this, nooftktstocancel + " tickets for the movie id " + movieID + " cancelled");
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "Partially Cancelled");
+                } else if (cancelConfirmation[0].equals("allcancelled")) {
+                    JOptionPane.showMessageDialog(this, "All tickets for the movie id " + movieID + " cancelled");
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "All Tickets Cancelled");
+                } else if (cancelConfirmation[0].equals("cncltktexceed")) {
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "No of tickets requested exceeded the number of tickets booked");
+                    JOptionPane.showMessageDialog(this, "Number of tickets requested to cancel were more than the number of booked tickets");
+                } else if (cancelConfirmation[0].equals("nobooking")) {
+                    LogWritterGeneral(userID, "Cancellation Confirmation", "No booking found");
+                    JOptionPane.showMessageDialog(this, "No bookings for the entered movie id for Customer ID " + userID);
+                }
+
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Error Occured RM informed");
+            }
+        } catch (Exception e) {
         }
-        
-        }
-        
-        catch(Exception e){}
     }//GEN-LAST:event_jButton1ActionPerformed
 
     public static StringBuilder data(byte[] a) {
@@ -224,7 +257,7 @@ public class CancelMovie extends javax.swing.JFrame {
         }
         return ret;
     }
-    
+
     private void LogWritterGeneral(String userID, String id, String value) {
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String directory = "C:\\Users\\Rohan\\Documents\\NetBeansProjects\\WebService_Logs" + date;

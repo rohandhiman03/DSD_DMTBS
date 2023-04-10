@@ -131,7 +131,7 @@ public class PublishATW {
 
     public static void main(String[] args) throws SocketException, IOException {
 
-        Endpoint endpoint1 = Endpoint.publish("http://192.168.56.1:8080/movieATW", new ATWImpl());
+        Endpoint endpoint1 = Endpoint.publish("http://10.0.0.34:8080/movieATW", new ATWImpl());
         System.out.println("ATW service is published: " + endpoint1.isPublished());
         
         allmovieDetails.put("Avengers", moviedetailAvengers);

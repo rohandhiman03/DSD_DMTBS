@@ -5,6 +5,7 @@
  */
 package WebService;
 
+import static WebService.RemoveMovie.data;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -107,12 +108,12 @@ public class GetMovieSchedule extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        try{
-        String reqForSequencer = "getMovieSchedule," + userID;
-        
-        DatagramSocket ds = new DatagramSocket();
+        try {
+            String reqForSequencer = "getMovieSchedule," + userID;
 
-            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            DatagramSocket ds = new DatagramSocket();
+
+            InetAddress ip = InetAddress.getByName("10.0.0.34");
             byte buf[] = null;
 
             buf = reqForSequencer.getBytes();
@@ -127,34 +128,58 @@ public class GetMovieSchedule extends javax.swing.JFrame {
 
             DpReceive = new DatagramPacket(receive, receive.length);
             dsReceive.setSoTimeout(5000);
-            
-            
+
             try {
-                dsReceive.receive(DpReceive);  
+                dsReceive.receive(DpReceive);
                 dsReceive.close();
             } catch (SocketTimeoutException e) {
                 dsReceive.close();
                 JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
             }
-            
-            String showList = data(receive).toString();
-                
-        if (showList.replaceAll("[{}]", "").isEmpty()) {
-            LogWritterGeneral(userID, "Booking Schedule For User ID " + userID, "No bookings made");
-            JOptionPane.showMessageDialog(this, "No bookings made for " + userID);
-//            System.out.println("No bookings made for " + userID);
-        } else {
-            LogWritterGeneral(userID, "Booking schedule for " + userID, showList);
-//            System.out.println(showList);
-            jTextArea1.setText(showList);
-            LogWritterGeneral(userID, "Bookings for " + userID, showList);
 
+            String combinedshowList = data(receive).toString();
+            String[] showList = combinedshowList.split(",");
+            if (showList[0].equals(showList[1])) {
+                if (showList[0].replaceAll("[{}]", "").isEmpty()) {
+                    LogWritterGeneral(userID, "Booking Schedule For User ID " + userID, "No bookings made");
+                    JOptionPane.showMessageDialog(this, "No bookings made for " + userID);
+                } else {
+                    LogWritterGeneral(userID, "Booking schedule for " + userID, showList[0]);
+                    jTextArea1.setText(showList[0]);
+                    LogWritterGeneral(userID, "Bookings for " + userID, showList[0]);
+
+                }
+            }
+            else if (showList[1].equals(showList[2])) {
+                if (showList[1].replaceAll("[{}]", "").isEmpty()) {
+                    LogWritterGeneral(userID, "Booking Schedule For User ID " + userID, "No bookings made");
+                    JOptionPane.showMessageDialog(this, "No bookings made for " + userID);
+                } else {
+                    LogWritterGeneral(userID, "Booking schedule for " + userID, showList[1]);
+                    jTextArea1.setText(showList[1]);
+                    LogWritterGeneral(userID, "Bookings for " + userID, showList[1]);
+
+                }
+            }
+            else if (showList[0].equals(showList[2])) {
+                if (showList[0].replaceAll("[{}]", "").isEmpty()) {
+                    LogWritterGeneral(userID, "Booking Schedule For User ID " + userID, "No bookings made");
+                    JOptionPane.showMessageDialog(this, "No bookings made for " + userID);
+                } else {
+                    LogWritterGeneral(userID, "Booking schedule for " + userID, showList[0]);
+                    jTextArea1.setText(showList[0]);
+                    LogWritterGeneral(userID, "Bookings for " + userID, showList[0]);
+
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Error Occured RM informed");
+            }
+        } catch (Exception e) {
         }
-        }
-        catch(Exception e){}
     }//GEN-LAST:event_jButton1ActionPerformed
 
-     private void LogWritterGeneral(String userID, String id, String value) {
+    private void LogWritterGeneral(String userID, String id, String value) {
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String directory = "C:\\Users\\Rohan\\Documents\\NetBeansProjects\\WebService_Logs" + date;
         try {
@@ -182,8 +207,8 @@ public class GetMovieSchedule extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e);
         }
     }
-     
-     public static StringBuilder data(byte[] a) {
+
+    public static StringBuilder data(byte[] a) {
         if (a == null) {
             return null;
         }

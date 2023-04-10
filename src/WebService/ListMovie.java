@@ -168,17 +168,17 @@ public class ListMovie extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         try {
-//        URL urlATW = new URL("http://192.168.56.1:8080/movieATW?wsdl");
+//        URL urlATW = new URL("http://10.0.0.34:8080/movieATW?wsdl");
 //            QName qNameATW = new QName("http://WebService/", "ATWImplService");
 //            Service serviceATW = Service.create(urlATW, qNameATW);
 //            IATW atw = serviceATW.getPort(IATW.class);
 //            
-//            URL urlVER = new URL("http://192.168.56.1:8081/movieVER?wsdl");
+//            URL urlVER = new URL("http://10.0.0.34:8081/movieVER?wsdl");
 //            QName qNameVER = new QName("http://WebService/", "VERImplService");
 //            Service serviceVER = Service.create(urlVER, qNameVER);
 //            IVER ver = serviceVER.getPort(IVER.class);
 //            
-//            URL urlOUT = new URL("http://192.168.56.1:8082/movieOUT?wsdl");
+//            URL urlOUT = new URL("http://10.0.0.34:8082/movieOUT?wsdl");
 //            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
 //            Service serviceOUT = Service.create(urlOUT, qNameOUT);
 //            IOUT out = serviceOUT.getPort(IOUT.class);
@@ -195,7 +195,7 @@ public class ListMovie extends javax.swing.JFrame {
 //                        }
             DatagramSocket ds = new DatagramSocket();
 
-            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            InetAddress ip = InetAddress.getByName("10.0.0.34");
             byte buf[] = null;
 
             buf = reqForSequencer.getBytes();
@@ -219,16 +219,39 @@ public class ListMovie extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
             }
 
-            String showList = data(receive).toString();
+            String combinedshowList = data(receive).toString();
+            String[] showList = combinedshowList.split(",");
 
             System.out.println("Shows For " + movieName);
-            if (showList.replaceAll("[{}]", "").isEmpty()) {
+            if (showList[0].equals(showList[1])) {
+            if (showList[0].replaceAll("[{}]", "").isEmpty()) {
                 LogWritterGeneral(userID, "List Of Shows For " + movieName, "No shows available");
                 JOptionPane.showMessageDialog(this, "No shows available");
             } else {
-                jTextArea1.setText(showList);
-                LogWritterGeneral(userID, "List Of Shows For " + movieName, showList.toString());
+                jTextArea1.setText(showList[0]);
+                LogWritterGeneral(userID, "List Of Shows For " + movieName, showList[0]);
 
+            }}
+            else if (showList[1].equals(showList[2])) {
+            if (showList[1].replaceAll("[{}]", "").isEmpty()) {
+                LogWritterGeneral(userID, "List Of Shows For " + movieName, "No shows available");
+                JOptionPane.showMessageDialog(this, "No shows available");
+            } else {
+                jTextArea1.setText(showList[1]);
+                LogWritterGeneral(userID, "List Of Shows For " + movieName, showList[1]);
+
+            }}
+            else if (showList[0].equals(showList[2])) {
+            if (showList[0].replaceAll("[{}]", "").isEmpty()) {
+                LogWritterGeneral(userID, "List Of Shows For " + movieName, "No shows available");
+                JOptionPane.showMessageDialog(this, "No shows available");
+            } else {
+                jTextArea1.setText(showList[0]);
+                LogWritterGeneral(userID, "List Of Shows For " + movieName, showList[0]);
+
+            }}
+            else{
+                JOptionPane.showMessageDialog(this, "Error Occured RM informed");
             }
         } catch (Exception e) {
 

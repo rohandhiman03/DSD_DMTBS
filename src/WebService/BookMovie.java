@@ -201,7 +201,7 @@ public class BookMovie extends javax.swing.JFrame {
 
             DatagramSocket ds = new DatagramSocket();
 
-            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            InetAddress ip = InetAddress.getByName("10.0.0.34");
             byte buf[] = null;
 
             buf = reqForSequencer.getBytes();
@@ -218,24 +218,56 @@ public class BookMovie extends javax.swing.JFrame {
             dsReceive.setSoTimeout(5000);
 
             try {
-                dsReceive.receive(DpReceive);  
+                dsReceive.receive(DpReceive);
                 dsReceive.close();
             } catch (SocketTimeoutException e) {
                 dsReceive.close();
                 JOptionPane.showMessageDialog(this, "No response received within 5 seconds RM informed");
             }
-            
-            String bookingConfirmation = data(receive).toString();
-            if (bookingConfirmation.equals("booked")) {
-                JOptionPane.showMessageDialog(this, " Tickets booked for Movie " + movieName);
-            } else if (bookingConfirmation.equals("capntavl")) {
-                JOptionPane.showMessageDialog(this, "Entered No of tickets required are not available for the Movie " + movieName + " for date " + dateinp + " and slot " + movieSlot);
 
-            } else if (bookingConfirmation.equals("otherbkgcntexcd")) {
-                JOptionPane.showMessageDialog(this, "Max limit to book movie in another theatre exhausted for this week.");
+            String combinedbookingConfirmation = data(receive).toString();
+            String[] bookingConfirmation = combinedbookingConfirmation.split(",");
+            if (bookingConfirmation[0].equals(bookingConfirmation[1])) {
+                if (bookingConfirmation[0].equals("booked")) {
+                    JOptionPane.showMessageDialog(this, " Tickets booked for Movie " + movieName);
+                } else if (bookingConfirmation[0].equals("capntavl")) {
+                    JOptionPane.showMessageDialog(this, "Entered No of tickets required are not available for the Movie " + movieName + " for date " + dateinp + " and slot " + movieSlot);
 
-            } else if (bookingConfirmation.equals("notavl")) {
-                JOptionPane.showMessageDialog(this, "Movie Not Found");
+                } else if (bookingConfirmation[0].equals("otherbkgcntexcd")) {
+                    JOptionPane.showMessageDialog(this, "Max limit to book movie in another theatre exhausted for this week.");
+
+                } else if (bookingConfirmation[0].equals("notavl")) {
+                    JOptionPane.showMessageDialog(this, "Movie Not Found");
+                }
+            }
+            if (bookingConfirmation[2].equals(bookingConfirmation[1])) {
+                if (bookingConfirmation[2].equals("booked")) {
+                    JOptionPane.showMessageDialog(this, " Tickets booked for Movie " + movieName);
+                } else if (bookingConfirmation[2].equals("capntavl")) {
+                    JOptionPane.showMessageDialog(this, "Entered No of tickets required are not available for the Movie " + movieName + " for date " + dateinp + " and slot " + movieSlot);
+
+                } else if (bookingConfirmation[2].equals("otherbkgcntexcd")) {
+                    JOptionPane.showMessageDialog(this, "Max limit to book movie in another theatre exhausted for this week.");
+
+                } else if (bookingConfirmation[2].equals("notavl")) {
+                    JOptionPane.showMessageDialog(this, "Movie Not Found");
+                }
+            }
+            if (bookingConfirmation[0].equals(bookingConfirmation[2])) {
+                if (bookingConfirmation[0].equals("booked")) {
+                    JOptionPane.showMessageDialog(this, " Tickets booked for Movie " + movieName);
+                } else if (bookingConfirmation[0].equals("capntavl")) {
+                    JOptionPane.showMessageDialog(this, "Entered No of tickets required are not available for the Movie " + movieName + " for date " + dateinp + " and slot " + movieSlot);
+
+                } else if (bookingConfirmation[0].equals("otherbkgcntexcd")) {
+                    JOptionPane.showMessageDialog(this, "Max limit to book movie in another theatre exhausted for this week.");
+
+                } else if (bookingConfirmation[0].equals("notavl")) {
+                    JOptionPane.showMessageDialog(this, "Movie Not Found");
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Error Occured RM informed");
             }
 
         } catch (Exception e) {
@@ -243,7 +275,7 @@ public class BookMovie extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-     public static StringBuilder data(byte[] a) {
+    public static StringBuilder data(byte[] a) {
         if (a == null) {
             return null;
         }
@@ -255,6 +287,7 @@ public class BookMovie extends javax.swing.JFrame {
         }
         return ret;
     }
+
     private void LogWritterGeneral(String userID, String id, String value) {
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String directory = "C:\\Users\\Rohan\\Documents\\NetBeansProjects\\WebService_Logs" + date;

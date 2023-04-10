@@ -12,13 +12,15 @@ package WebService;
 public class Admin extends javax.swing.JFrame {
 
     private String userID;
+    private int time_out;
 
     /**
      * Creates new form Admin
      */
-    public Admin(String userID) {
+    public Admin(String userID,int time_out) {
         initComponents();
         this.userID = userID;
+        this.time_out = time_out;
         jLabel2.setText(userID);
     }
 
@@ -106,7 +108,7 @@ public class Admin extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        AddMovie addmovieFrame = new AddMovie(userID);
+        AddMovie addmovieFrame = new AddMovie(userID,time_out);
         addmovieFrame.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed

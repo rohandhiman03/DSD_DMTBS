@@ -22,7 +22,6 @@ import javax.xml.ws.Service;
  * @author Rohan
  */
 public class Login extends javax.swing.JFrame {
-    
 
     /**
      * Creates new form Login
@@ -39,11 +38,16 @@ public class Login extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,23 +70,54 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.setText("Single Software Failure");
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jRadioButton1, org.jdesktop.beansbinding.ELProperty.create("${actionCommand}"), jRadioButton1, org.jdesktop.beansbinding.BeanProperty.create("actionCommand"));
+        bindingGroup.addBinding(binding);
+
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.setText("Highly Available");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jRadioButton2, org.jdesktop.beansbinding.ELProperty.create("${actionCommand}"), jRadioButton2, org.jdesktop.beansbinding.BeanProperty.create("actionCommand"));
+        bindingGroup.addBinding(binding);
+
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Select Type Of Failure");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(78, 78, 78)
-                .addComponent(jLabel2)
-                .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(jLabel2)
+                        .addGap(37, 37, 37)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(89, Short.MAX_VALUE))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(46, 46, 46)
+                        .addComponent(jLabel3)
+                        .addGap(26, 26, 26)
+                        .addComponent(jRadioButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jRadioButton2)))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -93,10 +128,17 @@ public class Login extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addGap(37, 37, 37)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton1)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addGap(19, 19, 19))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -156,82 +198,97 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-      try{
-        URL urlATW = new URL("http://192.168.56.1:8080/movieATW?wsdl");
-        QName qNameATW = new QName("http://WebService/", "ATWImplService");
-        Service serviceATW = Service.create(urlATW, qNameATW);
-        IATW atw = serviceATW.getPort(IATW.class);
+        try {
+            int time_out = 0;
+            String typeOfFailure = buttonGroup1.getSelection().getActionCommand();
+            if (typeOfFailure.equals("Single Software Failure")) {                
+                
+            } else if (typeOfFailure.equals("Highly Available")) {
+                time_out = 6000; 
+            }
+            System.out.println(typeOfFailure);
+            URL urlATW = new URL("http://10.0.0.34:8080/movieATW?wsdl");
+            QName qNameATW = new QName("http://WebService/", "ATWImplService");
+            Service serviceATW = Service.create(urlATW, qNameATW);
+            IATW atw = serviceATW.getPort(IATW.class);
 
-        URL urlVER = new URL("http://192.168.56.1:8081/movieVER?wsdl");
-        QName qNameVER = new QName("http://WebService/", "VERImplService");
-        Service serviceVER = Service.create(urlVER, qNameVER);
-        IVER ver = serviceVER.getPort(IVER.class);
+            URL urlVER = new URL("http://10.0.0.34:8081/movieVER?wsdl");
+            QName qNameVER = new QName("http://WebService/", "VERImplService");
+            Service serviceVER = Service.create(urlVER, qNameVER);
+            IVER ver = serviceVER.getPort(IVER.class);
 
-        URL urlOUT = new URL("http://192.168.56.1:8082/movieOUT?wsdl");
-        QName qNameOUT = new QName("http://WebService/", "OUTImplService");
-        Service serviceOUT = Service.create(urlOUT, qNameOUT);
-        IOUT out = serviceOUT.getPort(IOUT.class);
-        
-        String userID = jTextField1.getText();
-        String typeofcust = checkLoginID(userID);
-        String userCheckServer = "";
-        if (userID.substring(0, 3).equals("ATW")) {
-            userCheckServer = atw.checkUserExists(userID);
-        } else if (userID.substring(0, 3).equals("VER")) {
-            userCheckServer = ver.checkUserExists(userID);
-        } else if (userID.substring(0, 3).equals("OUT")) {
-            userCheckServer = out.checkUserExists(userID);
-        }
-        if (!userCheckServer.equals("y")) {
-            JOptionPane.showMessageDialog(this, "User ID does not exist!!");
-        } else {
+            URL urlOUT = new URL("http://10.0.0.34:8082/movieOUT?wsdl");
+            QName qNameOUT = new QName("http://WebService/", "OUTImplService");
+            Service serviceOUT = Service.create(urlOUT, qNameOUT);
+            IOUT out = serviceOUT.getPort(IOUT.class);
 
-            switch (typeofcust) {
-                case "A":
-                    LogWritterGeneral(userID, "Login", "Admin");
-                    try {
-                        LogWritterGeneral(userID, "Admin " + userID, "LoggedIn");
+            String userID = jTextField1.getText();
+            String typeofcust = checkLoginID(userID);
+            String userCheckServer = "";
+            if (userID.substring(0, 3).equals("ATW")) {
+                userCheckServer = atw.checkUserExists(userID);
+            } else if (userID.substring(0, 3).equals("VER")) {
+                userCheckServer = ver.checkUserExists(userID);
+            } else if (userID.substring(0, 3).equals("OUT")) {
+                userCheckServer = out.checkUserExists(userID);
+            }
+            if (!userCheckServer.equals("y")) {
+                JOptionPane.showMessageDialog(this, "User ID does not exist!!");
+            } else {
 
-                        Admin adminFrame = new Admin(userID);
-                        adminFrame.setVisible(true);
-                        this.dispose();
+                switch (typeofcust) {
+                    case "A":
+                        LogWritterGeneral(userID, "Login", "Admin");
+                        try {
+                            LogWritterGeneral(userID, "Admin " + userID, "LoggedIn");
 
-                    } catch (Exception e) {
-                        LogWritterGeneral(userID, "Exception Occured", e.toString());
+                            Admin adminFrame = new Admin(userID,time_out);
+                            adminFrame.setVisible(true);
+                            this.dispose();
 
-                        System.out.println(e);
-                        JOptionPane.showMessageDialog(this, e);
-                    }
+                        } catch (Exception e) {
+                            LogWritterGeneral(userID, "Exception Occured", e.toString());
+
+                            System.out.println(e);
+                            JOptionPane.showMessageDialog(this, e);
+                        }
 //                                  
 
-                    break;
-                case "C":
-                    LogWritterGeneral(userID, "Login", "Client");
-                    try {
-                        LogWritterGeneral(userID, "Customer " + userID, "LoggedIn");
-                        JOptionPane.showMessageDialog(this, "Customer Logged In");
-                        Customer custFrame = new Customer(userID);
-                        custFrame.setVisible(true);
-                        this.dispose();
-                    } catch (Exception e) {
-                        LogWritterGeneral(userID, "Exception Occured", e.toString());
+                        break;
+                    case "C":
+                        LogWritterGeneral(userID, "Login", "Client");
+                        try {
+                            LogWritterGeneral(userID, "Customer " + userID, "LoggedIn");
+                            JOptionPane.showMessageDialog(this, "Customer Logged In");
+                            Customer custFrame = new Customer(userID);
+                            custFrame.setVisible(true);
+                            this.dispose();
+                        } catch (Exception e) {
+                            LogWritterGeneral(userID, "Exception Occured", e.toString());
 
-                        System.err.println(e);
-                    }
+                            System.err.println(e);
+                        }
 //                                    
-                    break;
-                default:
-                    LogWritterGeneral(userID, "Login", "Invalid User ID");
-                    JOptionPane.showMessageDialog(this, "Invalid Customer ID. Please Try Again");
-                    break;
+                        break;
+                    default:
+                        LogWritterGeneral(userID, "Login", "Invalid User ID");
+                        JOptionPane.showMessageDialog(this, "Invalid Customer ID. Please Try Again");
+                        break;
+                }
             }
+        } catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(this, e);
         }
-      }
-      catch(Exception e){
-          System.out.println(e);
-           JOptionPane.showMessageDialog(this, e);
-      }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -266,13 +323,18 @@ public class Login extends javax.swing.JFrame {
                 new Login().setVisible(true);
             }
         });
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JTextField jTextField1;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

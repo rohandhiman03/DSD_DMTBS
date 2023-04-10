@@ -188,7 +188,7 @@ private String userID;
         
         DatagramSocket ds = new DatagramSocket();
 
-            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            InetAddress ip = InetAddress.getByName("10.0.0.34");
             byte buf[] = null;
 
             buf = reqForSequencer.getBytes();

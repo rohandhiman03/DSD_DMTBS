@@ -237,7 +237,7 @@ public class RemoveMovie extends javax.swing.JFrame {
 
             DatagramSocket ds = new DatagramSocket();
 
-            InetAddress ip = InetAddress.getByName("192.168.56.1");
+            InetAddress ip = InetAddress.getByName("10.0.0.34");
             byte buf[] = null;
 
             buf = reqForSequencer.getBytes();
@@ -264,13 +264,7 @@ public class RemoveMovie extends javax.swing.JFrame {
             String combinedremoveSuccess = data(receive).toString();
             String[] removeSuccess = combinedremoveSuccess.split(",");
 
-//            if (userID.substring(0, 3).equals("ATW")) {
-//                removeSuccess = atw.removeMovieSlots(movieID, movieName);
-//            } else if (userID.substring(0, 3).equals("VER")) {
-//                removeSuccess = ver.removeMovieSlots(movieID, movieName);
-//            } else if (userID.substring(0, 3).equals("OUT")) {
-//                removeSuccess = out.removeMovieSlots(movieID, movieName);
-//            }
+
             if (removeSuccess[0].equals(removeSuccess[1])) {
                 if (removeSuccess[0].equals("y")) {
                     JOptionPane.showMessageDialog(this, "Movie Slot Removed");
@@ -304,6 +298,9 @@ public class RemoveMovie extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Movie Slot Doesnt Exist");
                     LogWritterGeneral(userID, "Movie Slot Doesnt Exist", movieID);
                 }
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Error Occured RM informed");
             }
         } catch (Exception e) {
 

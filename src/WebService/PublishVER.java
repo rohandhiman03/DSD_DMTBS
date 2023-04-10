@@ -129,7 +129,7 @@ public class PublishVER {
     }
 
     public static void main(String[] args) throws SocketException, IOException {
-        Endpoint endpoint1 = Endpoint.publish("http://192.168.56.1:8081/movieVER", new VERImpl());
+        Endpoint endpoint1 = Endpoint.publish("http://10.0.0.34:8081/movieVER", new VERImpl());
         System.out.println("VER service is published: " + endpoint1.isPublished());
 
         allmovieDetails.put("Avengers", moviedetailAvengers);
