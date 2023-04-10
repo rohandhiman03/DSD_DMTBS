@@ -5,8 +5,12 @@
  */
 package WebService;
 
+import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 
 /**
@@ -18,6 +22,10 @@ public class ReplicaManager {
 
     public void restartServices0() {
         try {
+            Sequencer.stopService((WebService) Sequencer.atw);
+            Sequencer.stopService((WebService) Sequencer.out);
+            Sequencer.stopService((WebService) Sequencer.ver);
+
             AddMovie.time_out = 0;
             URL urlATW = new URL("http://10.0.0.34:8080/movieATW?wsdl");
             QName qNameATW = new QName("http://WebService/", "ATWImplService");
@@ -48,6 +56,10 @@ public class ReplicaManager {
 
     public void restartServices1() {
         try {
+            Sequencer.stopService((WebService) Sequencer.atw2);
+            Sequencer.stopService((WebService) Sequencer.out2);
+            Sequencer.stopService((WebService) Sequencer.ver2);
+
             URL urlATW2 = new URL("http://10.0.0.170:8083/movieATW?wsdl");
             QName qNameATW2 = new QName("http://WebService/", "ATWImplService");
             Service serviceATW2 = Service.create(urlATW2, qNameATW2);
@@ -76,6 +88,9 @@ public class ReplicaManager {
 
     public void restartServices2() {
         try {
+            Sequencer.stopService((WebService) Sequencer.atw3);
+            Sequencer.stopService((WebService) Sequencer.out3);
+            Sequencer.stopService((WebService) Sequencer.ver3);
 
             URL urlATW3 = new URL("http://10.0.0.34:8080/movieATW?wsdl");
             QName qNameATW3 = new QName("http://WebService/", "ATWImplService");
@@ -93,9 +108,7 @@ public class ReplicaManager {
             IOUT out3 = serviceOUT3.getPort(IOUT.class);
 
             Sequencer.atw3 = atw3;
-
             Sequencer.ver3 = ver3;
-
             Sequencer.out3 = out3;
             
             System.out.println("Replica 3 Restarted");
@@ -104,4 +117,6 @@ public class ReplicaManager {
             System.err.println("Error while restarting services: " + e.getMessage());
         }
     }
+
+
 }
