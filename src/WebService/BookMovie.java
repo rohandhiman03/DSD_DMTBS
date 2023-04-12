@@ -240,7 +240,7 @@ public class BookMovie extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Movie Not Found");
                 }
             }
-            if (bookingConfirmation[2].equals(bookingConfirmation[1])) {
+            else if (bookingConfirmation[2].equals(bookingConfirmation[1])) {
                 if (bookingConfirmation[2].equals("booked")) {
                     JOptionPane.showMessageDialog(this, " Tickets booked for Movie " + movieName);
                 } else if (bookingConfirmation[2].equals("capntavl")) {
@@ -253,7 +253,7 @@ public class BookMovie extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Movie Not Found");
                 }
             }
-            if (bookingConfirmation[0].equals(bookingConfirmation[2])) {
+            else if (bookingConfirmation[0].equals(bookingConfirmation[2])) {
                 if (bookingConfirmation[0].equals("booked")) {
                     JOptionPane.showMessageDialog(this, " Tickets booked for Movie " + movieName);
                 } else if (bookingConfirmation[0].equals("capntavl")) {

@@ -143,7 +143,7 @@ public class Sequencer {
                 }
 
                 DatagramSocket dsSend = new DatagramSocket();
-                InetAddress ip = InetAddress.getByName("10.0.0.34");
+                InetAddress ip = DpReceive.getAddress();
                 byte buf[] = null;
 
                 buf = bookingSuccess.getBytes();
@@ -157,9 +157,9 @@ public class Sequencer {
                 String movieID = function[2];
                 String movieName = function[3];
                 String removeSuccess = "";
-                Future<String> result1 = null;
-                Future<String> result2 = null;
-                Future<String> result3 = null;
+                Future<String> result1 = CompletableFuture.completedFuture(" ");
+                Future<String> result2 = CompletableFuture.completedFuture(" ");
+                Future<String> result3 = CompletableFuture.completedFuture(" ");
                 if (userID.substring(0, 3).equals("ATW")) {
                     result1 = executor.submit(() -> atw.removeMovieSlots(movieID, movieName));
                     result2 = executor.submit(() -> atw2.removeMovieSlots(movieID, movieName));
@@ -186,7 +186,7 @@ public class Sequencer {
                 }
 
                 DatagramSocket dsSend = new DatagramSocket();
-                InetAddress ip = InetAddress.getByName("10.0.0.34");
+                InetAddress ip = DpReceive.getAddress();
                 byte buf[] = null;
 
                 buf = removeSuccess.getBytes();
@@ -200,9 +200,9 @@ public class Sequencer {
                 String showList = "";
                 String userID = function[1];
                 String movieName = function[2];
-                Future<String> result1 = null;
-                Future<String> result2 = null;
-                Future<String> result3 = null;
+                Future<String> result1 = CompletableFuture.completedFuture(" ");
+                Future<String> result2 = CompletableFuture.completedFuture(" ");
+                Future<String> result3 = CompletableFuture.completedFuture(" ");
 
                 if (userID.substring(0, 3).equals("ATW")) {
                     result1 = executor.submit(() -> atw.listMovieShowsAvailability(movieName));
@@ -230,7 +230,7 @@ public class Sequencer {
                 }
 
                 DatagramSocket dsSend = new DatagramSocket();
-                InetAddress ip = InetAddress.getByName("10.0.0.34");
+                InetAddress ip = DpReceive.getAddress();
                 byte buf[] = null;
 
                 buf = showList.getBytes();
@@ -242,9 +242,9 @@ public class Sequencer {
             } else if (function[0].equals("getMovieSchedule")) {
 
                 String showList = "";
-                Future<String> result1 = null;
-                Future<String> result2 = null;
-                Future<String> result3 = null;
+                Future<String> result1 = CompletableFuture.completedFuture(" ");
+                Future<String> result2 = CompletableFuture.completedFuture(" ");
+                Future<String> result3 = CompletableFuture.completedFuture(" ");
                 String userID = function[1];
                 if (userID.substring(0, 3).equals("ATW")) {
                     result1 = executor.submit(() -> atw.getBookingSchedule(userID));
@@ -272,7 +272,7 @@ public class Sequencer {
                 }
 
                 DatagramSocket dsSend = new DatagramSocket();
-                InetAddress ip = InetAddress.getByName("10.0.0.34");
+                InetAddress ip = DpReceive.getAddress();
                 byte buf[] = null;
 
                 buf = showList.getBytes();
@@ -286,9 +286,9 @@ public class Sequencer {
                 String movieID = function[2];
                 String movieName = function[3];
                 int nooftktstocancel = Integer.parseInt(function[4]);
-                Future<String> result1 = null;
-                Future<String> result2 = null;
-                Future<String> result3 = null;
+                Future<String> result1 = CompletableFuture.completedFuture(" ");
+                Future<String> result2 = CompletableFuture.completedFuture(" ");
+                Future<String> result3 = CompletableFuture.completedFuture(" ");
                 String cancelConfirmation = "";
 
                 if (movieID.substring(0, 3).equals("ATW")) {
@@ -319,7 +319,7 @@ public class Sequencer {
                 }
 
                 DatagramSocket dsSend = new DatagramSocket();
-                InetAddress ip = InetAddress.getByName("10.0.0.34");
+                InetAddress ip = DpReceive.getAddress();
                 byte buf[] = null;
 
                 buf = cancelConfirmation.getBytes();
@@ -388,7 +388,7 @@ public class Sequencer {
                 }
 
                 DatagramSocket dsSend = new DatagramSocket();
-                InetAddress ip = InetAddress.getByName("10.0.0.34");
+                InetAddress ip = DpReceive.getAddress();
                 byte buf[] = null;
 
                 buf = bookingExhange.getBytes();
@@ -402,9 +402,9 @@ public class Sequencer {
                 String movieID = function[2];
                 String movieName = function[3];
                 int BookingCapacity = Integer.parseInt(function[4]);
-                Future<String> result1 = null;
-                Future<String> result2 = null;
-                Future<String> result3 = null;
+                Future<String> result1 = CompletableFuture.completedFuture(" ");
+                Future<String> result2 = CompletableFuture.completedFuture(" ");
+                Future<String> result3 = CompletableFuture.completedFuture(" ");
                 String movieFound = "";
 
                 String bookingConfirmation = "";
@@ -446,7 +446,7 @@ public class Sequencer {
                 }
 
                 DatagramSocket dsSend = new DatagramSocket();
-                InetAddress ip = InetAddress.getByName("10.0.0.34");
+                InetAddress ip = DpReceive.getAddress();
                 byte buf[] = null;
 
                 buf = bookingConfirmation.getBytes();
@@ -455,7 +455,7 @@ public class Sequencer {
                 dsSend.close();
                 executor.shutdown();
             }
-
+//            ds.close();
             receive = new byte[65535];
 
         }
